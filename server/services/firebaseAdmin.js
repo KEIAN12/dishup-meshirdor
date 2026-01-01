@@ -11,7 +11,7 @@ let initialized = false;
 
 export function initializeFirebaseAdmin() {
   if (initialized) {
-    return admin;
+    return admin.apps.length > 0 ? admin : null;
   }
 
   try {
@@ -24,6 +24,9 @@ export function initializeFirebaseAdmin() {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
       });
+      initialized = true;
+      console.log('Firebase Admin SDK initialized');
+      return admin;
     } else {
       // ファイルパスとして提供されている場合
       const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH || 
@@ -36,6 +39,9 @@ export function initializeFirebaseAdmin() {
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
         });
+        initialized = true;
+        console.log('Firebase Admin SDK initialized');
+        return admin;
       } else {
         // プロジェクトIDのみで初期化（開発環境用）
         const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -43,26 +49,34 @@ export function initializeFirebaseAdmin() {
           admin.initializeApp({
             projectId: projectId,
           });
+          initialized = true;
+          console.log('Firebase Admin SDK initialized (project ID only)');
+          return admin;
         } else {
-          throw new Error('Firebase Admin SDKの初期化に失敗しました。環境変数を確認してください。');
+          // 環境変数が設定されていない場合は警告のみ出してスキップ
+          console.warn('⚠️  Firebase Admin SDK: 環境変数が設定されていません。認証機能は使用できません。');
+          console.warn('⚠️  環境変数 FIREBASE_PROJECT_ID または FIREBASE_SERVICE_ACCOUNT_KEY を設定してください。');
+          initialized = true; // 初期化済みとしてマーク（エラーを防ぐため）
+          return null; // nullを返す
         }
       }
     }
-    
-    initialized = true;
-    console.log('Firebase Admin SDK initialized');
-    return admin;
   } catch (error) {
     console.error('Error initializing Firebase Admin:', error);
-    throw error;
+    console.warn('⚠️  Firebase Admin SDKの初期化に失敗しましたが、サーバーは起動を続けます。');
+    initialized = true; // 初期化済みとしてマーク（エラーを防ぐため）
+    return null;
   }
 }
 
 // ID Tokenを検証
 export async function verifyIdToken(idToken) {
   try {
-    const admin = initializeFirebaseAdmin();
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const adminInstance = initializeFirebaseAdmin();
+    if (!adminInstance) {
+      throw new Error('Firebase Admin SDKが初期化されていません。環境変数を設定してください。');
+    }
+    const decodedToken = await adminInstance.auth().verifyIdToken(idToken);
     return decodedToken;
   } catch (error) {
     console.error('Error verifying ID token:', error);
@@ -70,6 +84,7 @@ export async function verifyIdToken(idToken) {
   }
 }
 
-export default initializeFirebaseAdmin();
+// 起動時の自動初期化をスキップ（環境変数がない場合でもサーバーを起動できるように）
+// export default initializeFirebaseAdmin();
 
 
