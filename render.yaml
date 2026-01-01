@@ -1,0 +1,41 @@
+services:
+  # バックエンド Web Service
+  - type: web
+    name: dishup-meshirdor-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      # 以下の環境変数はRender Dashboardで設定してください
+      # - key: STRIPE_SECRET_KEY
+      # - key: STRIPE_WEBHOOK_SECRET
+      # - key: FIREBASE_PROJECT_ID
+      # - key: FIREBASE_SERVICE_ACCOUNT_KEY
+      # - key: FRONTEND_URL
+      # - key: GITHUB_TOKEN
+    disk:
+      name: dishup-storage
+      mountPath: /opt/render/project/src/server
+      sizeGB: 1
+
+  # フロントエンド Static Site
+  - type: web
+    name: dishup-meshirdor-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://dishup-meshirdor-backend.onrender.com/api
+      # 以下の環境変数はRender Dashboardで設定してください
+      # - key: VITE_FIREBASE_API_KEY
+      # - key: VITE_FIREBASE_AUTH_DOMAIN
+      # - key: VITE_FIREBASE_PROJECT_ID
+      # - key: VITE_FIREBASE_APP_ID
+      # - key: GEMINI_API_KEY
+
+
