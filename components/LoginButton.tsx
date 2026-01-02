@@ -36,16 +36,16 @@ export const LoginButton: React.FC<LoginButtonProps> = ({
       <button
         onClick={handleGoogleLogin}
         disabled={isLoading}
-        className="bg-white text-slate-900 font-bold py-3 px-5 rounded-lg hover:bg-slate-50 transition-all flex items-center gap-2 text-sm border-2 border-slate-300 hover:border-slate-900 disabled:opacity-70 disabled:cursor-not-allowed"
+        className="bg-slate-900 text-brand-yellow font-black py-5 px-10 rounded-2xl text-xl hover:bg-slate-800 hover:scale-105 hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transition-all shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] border-4 border-slate-900 transform hover:-translate-y-1 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 disabled:transform-none"
       >
         {isLoading ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-6 h-6 animate-spin" />
             ログイン中...
           </>
         ) : (
           <>
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -63,7 +63,7 @@ export const LoginButton: React.FC<LoginButtonProps> = ({
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Googleでログイン
+            今すぐ無料で試してみる
           </>
         )}
       </button>

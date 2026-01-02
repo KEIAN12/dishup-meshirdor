@@ -104,39 +104,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
           </button>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-            <Settings className="w-3 h-3" />
-            プラン切り替え (デバッグ)
-          </h2>
-          <div className="space-y-3">
-            {Object.values(PlanType).map((plan) => {
-              const planConfig = PLANS[plan];
-              const isSelected = userState.plan === plan;
-              return (
-                <button
-                  key={plan}
-                  onClick={() => onPlanChange(plan)}
-                  className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all border group relative ${
-                    isSelected
-                      ? 'bg-brand-yellow text-slate-900 border-brand-yellow font-bold shadow-md'
-                      : 'bg-transparent text-slate-400 border-slate-700 hover:border-slate-500 hover:text-white'
-                  }`}
-                >
-                  <div className="flex justify-between items-center">
-                    <span>{plan}</span>
-                    {isSelected && <ChevronRight className="w-4 h-4" />}
-                  </div>
-                  {isSelected && (
-                    <span className="text-xs opacity-75 font-normal mt-1 block">
-                      {planConfig.price}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
       <div className="p-6 border-t border-slate-800 bg-slate-900">
