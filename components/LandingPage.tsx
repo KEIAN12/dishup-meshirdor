@@ -185,25 +185,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
           
           {/* Right: Before/After Side by Side */}
           <div className="relative">
-            <div className="flex flex-col md:grid md:grid-cols-2 gap-4">
-              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[4/3]">
                 <div className="absolute top-2 left-2 bg-slate-900 text-white text-sm font-black px-3 py-1.5 rounded z-10">
                   BEFORE
                 </div>
                 <img 
                   src={meatBefore} 
                   alt="Before" 
-                  className="w-full h-[400px] md:h-[500px] object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
-              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[4/3]">
                 <div className="absolute top-2 left-2 bg-brand-yellow text-slate-900 text-sm font-black px-3 py-1.5 rounded z-10">
                   AFTER
                 </div>
                 <img 
                   src={meatAfter} 
                   alt="After" 
-                  className="w-full h-[400px] md:h-[500px] object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
