@@ -186,8 +186,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
           
           {/* Right: Before/After Vertical Stack */}
           <div className="relative">
-            <div className="grid grid-cols-1 gap-4 max-w-[70%] mx-auto">
-              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[4/3]">
+            <div className="grid grid-cols-1 gap-4">
+              {/* Before - 小さめに表示 */}
+              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[4/3] max-w-[60%] mx-auto">
                 <div className="absolute top-2 left-2 bg-slate-900 text-white text-sm font-black px-3 py-1.5 rounded z-10">
                   BEFORE
                 </div>
@@ -197,7 +198,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[4/3]">
+              {/* After - 大きく目立つように表示 */}
+              <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] aspect-[4/3] max-w-[90%] mx-auto">
                 <div className="absolute top-2 left-2 bg-brand-yellow text-slate-900 text-sm font-black px-3 py-1.5 rounded z-10">
                   AFTER
                 </div>
