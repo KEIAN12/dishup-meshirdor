@@ -28,6 +28,20 @@ if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.proj
   console.error('⚠️ Firebase環境変数が設定されていません。Render Dashboardで環境変数を設定し、再デプロイしてください。');
 }
 
+// 環境変数が設定されていない場合のエラーチェック
+if (!firebaseConfig.apiKey || firebaseConfig.apiKey === '') {
+  throw new Error('VITE_FIREBASE_API_KEY環境変数が設定されていません。Render Dashboardで環境変数を設定し、再デプロイしてください。');
+}
+if (!firebaseConfig.authDomain || firebaseConfig.authDomain === '') {
+  throw new Error('VITE_FIREBASE_AUTH_DOMAIN環境変数が設定されていません。Render Dashboardで環境変数を設定し、再デプロイしてください。');
+}
+if (!firebaseConfig.projectId || firebaseConfig.projectId === '') {
+  throw new Error('VITE_FIREBASE_PROJECT_ID環境変数が設定されていません。Render Dashboardで環境変数を設定し、再デプロイしてください。');
+}
+if (!firebaseConfig.appId || firebaseConfig.appId === '') {
+  throw new Error('VITE_FIREBASE_APP_ID環境変数が設定されていません。Render Dashboardで環境変数を設定し、再デプロイしてください。');
+}
+
 // Firebase初期化
 const app = initializeApp(firebaseConfig);
 
