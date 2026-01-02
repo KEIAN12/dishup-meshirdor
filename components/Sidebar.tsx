@@ -72,6 +72,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
             現在のステータス
           </h2>
           <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 shadow-lg">
+            {/* プラン表示 */}
+            <div className="mb-4 pb-4 border-b border-slate-700">
+              <p className="text-xs font-bold text-slate-400 mb-2">現在のプラン</p>
+              <div className="flex items-center gap-2">
+                <span className={`text-lg font-black ${
+                  userState.plan === PlanType.FREE ? 'text-slate-300' :
+                  userState.plan === PlanType.LIGHT ? 'text-blue-400' :
+                  userState.plan === PlanType.STANDARD ? 'text-green-400' :
+                  'text-purple-400'
+                }`}>
+                  {currentPlan.name}
+                </span>
+                {currentPlan.badge && (
+                  <span className="bg-brand-yellow text-slate-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                    {currentPlan.badge}
+                  </span>
+                )}
+              </div>
+            </div>
+            {/* 残りチケット表示 */}
             <div className="flex justify-between items-end mb-3">
               <span className="text-3xl font-black text-brand-yellow">{creditsRemaining}</span>
               <span className="text-sm font-bold text-slate-400">/ {currentPlan.limit} 枚</span>
@@ -108,6 +128,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
             <Zap className="w-3 h-3" />
             プラン管理
           </h2>
+          <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 mb-3">
+            <p className="text-xs font-bold text-slate-400 mb-1">現在のプラン</p>
+            <p className={`text-base font-black ${
+              userState.plan === PlanType.FREE ? 'text-slate-300' :
+              userState.plan === PlanType.LIGHT ? 'text-blue-400' :
+              userState.plan === PlanType.STANDARD ? 'text-green-400' :
+              'text-purple-400'
+            }`}>
+              {currentPlan.name}
+            </p>
+          </div>
           <button
             onClick={() => onShowPlanSelection?.()}
             className="w-full text-left px-4 py-3 rounded-lg text-sm transition-all border bg-transparent text-slate-400 border-slate-700 hover:border-slate-500 hover:text-white hover:bg-slate-800"
