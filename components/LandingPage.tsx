@@ -587,9 +587,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
               >
                 スタンダードを始める
               </button>
-              <div className="text-center mt-3 text-xs text-slate-400 font-medium">
-                追加チケット購入可能 (5枚 550円)
-              </div>
             </div>
 
             {/* Pro */}
