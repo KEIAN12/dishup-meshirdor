@@ -3,7 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { verifyIdToken } from '../services/firebaseAdmin.js';
-import * as githubService from '../services/githubService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -90,8 +89,6 @@ router.get('/', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
     let gallery = await readGallery(userId);
-    
-    // GitHub連携はユーザーごとの分離後は使用しない（必要に応じて後で実装）
     
     res.json(gallery);
   } catch (error) {

@@ -63,6 +63,38 @@ async function getUserById(userId) {
   return users.find(u => u.userId === userId);
 }
 
+async function findUserByStripeCustomerId(stripeCustomerId) {
+  const users = await readUsers();
+  return users.find(u => u.stripeCustomerId === stripeCustomerId);
+}
+
+// Stripe Price IDからプランタイプを取得
+async function getPlanTypeFromStripePriceId(priceId) {
+  if (!stripe || !priceId) {
+    return PlanType.FREE;
+  }
+  
+  try {
+    // Priceオブジェクトを取得
+    const price = await stripe.prices.retrieve(priceId);
+    
+    // lookup_keyからプランタイプを判定
+    if (price.lookup_key === PRICE_LOOKUP_KEYS[PlanType.LIGHT]) {
+      return PlanType.LIGHT;
+    } else if (price.lookup_key === PRICE_LOOKUP_KEYS[PlanType.STANDARD]) {
+      return PlanType.STANDARD;
+    } else if (price.lookup_key === PRICE_LOOKUP_KEYS[PlanType.PRO]) {
+      return PlanType.PRO;
+    }
+    
+    // lookup_keyが一致しない場合はFREEを返す
+    return PlanType.FREE;
+  } catch (error) {
+    console.error('Error retrieving price from Stripe:', error);
+    return PlanType.FREE;
+  }
+}
+
 async function updateUser(userId, updates) {
   const users = await readUsers();
   const userIndex = users.findIndex(u => u.userId === userId);
@@ -212,8 +244,28 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
-        // サブスクリプションの更新を処理
-        console.log(`Subscription updated: ${subscription.id}`);
+        const customerId = subscription.customer;
+        
+        try {
+          // 顧客IDからユーザーを取得
+          const user = await findUserByStripeCustomerId(customerId);
+          
+          if (user && subscription.items && subscription.items.data.length > 0) {
+            // サブスクリプションのPrice IDからプランタイプを取得
+            const priceId = subscription.items.data[0].price.id;
+            const newPlanType = await getPlanTypeFromStripePriceId(priceId);
+            
+            // ユーザーのプランを更新
+            await updateUser(user.userId, {
+              plan: newPlanType,
+              subscriptionId: subscription.id,
+            });
+            
+            console.log(`User ${user.userId} subscription updated to ${newPlanType} plan.`);
+          }
+        } catch (error) {
+          console.error('Error processing subscription update:', error);
+        }
         break;
       }
       
@@ -221,14 +273,18 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const subscription = event.data.object;
         // サブスクリプションのキャンセルを処理
         // ユーザーをFREEプランに戻す
-        const users = await readUsers();
-        const user = users.find(u => u.subscriptionId === subscription.id);
-        if (user) {
-          await updateUser(user.userId, {
-            plan: PlanType.FREE,
-            subscriptionId: null,
-          });
-          console.log(`Subscription canceled for user ${user.userId}`);
+        try {
+          const users = await readUsers();
+          const user = users.find(u => u.subscriptionId === subscription.id);
+          if (user) {
+            await updateUser(user.userId, {
+              plan: PlanType.FREE,
+              subscriptionId: null,
+            });
+            console.log(`Subscription canceled for user ${user.userId}`);
+          }
+        } catch (error) {
+          console.error('Error processing subscription deletion:', error);
         }
         break;
       }
