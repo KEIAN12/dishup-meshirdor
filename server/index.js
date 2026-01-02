@@ -40,8 +40,9 @@ app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve uploaded images (from storage/uploads)
+const UPLOADS_DIR = path.join(__dirname, 'storage/uploads');
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Routes
 app.use('/api/gallery', galleryRoutes);

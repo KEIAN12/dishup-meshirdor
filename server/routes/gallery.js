@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 const STORAGE_FILE = path.join(__dirname, '../storage/gallery.json');
-const UPLOAD_DIR = path.join(__dirname, '../uploads/gallery');
+const UPLOAD_DIR = path.join(__dirname, '../storage/uploads/gallery');
 
 // Ensure directories exist
 async function ensureDirectories() {
