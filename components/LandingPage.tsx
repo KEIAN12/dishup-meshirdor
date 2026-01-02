@@ -183,9 +183,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
             </div>
           </div>
           
-          {/* Right: Before/After Side by Side */}
+          {/* Right: Before/After Vertical Stack */}
           <div className="relative">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="relative rounded-xl overflow-hidden border-4 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[4/3]">
                 <div className="absolute top-2 left-2 bg-slate-900 text-white text-sm font-black px-3 py-1.5 rounded z-10">
                   BEFORE
