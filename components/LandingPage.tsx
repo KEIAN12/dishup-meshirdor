@@ -694,7 +694,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
               className="bg-brand-yellow text-slate-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition-colors flex items-center gap-2"
             >
               <MessageSquare className="w-4 h-4" />
-              意見・要望
+              ご意見・ご要望はコチラ
             </button>
             <button 
               onClick={() => onNavigate?.('commerce')}
