@@ -610,27 +610,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               {selectedImage && (
                 <div className="pt-2">
                   {creditsRemaining > 0 ? (
-                    <button
-                      onClick={handleGenerate}
-                      disabled={isGenerating}
-                      className="w-full bg-brand-yellow text-slate-900 font-bold py-5 px-6 rounded-lg shadow-lg hover:bg-yellow-400 disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 text-lg hover:-translate-y-1 active:translate-y-0"
-                    >
-                      {isGenerating ? (
-                        <>
-                          <Loader2 className="w-6 h-6 animate-spin text-slate-900" />
-                          AIが調理中...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-6 h-6 text-slate-900" />
-                          写真を生成する
-                          <span className="text-sm font-normal opacity-70 ml-2">(残り {creditsRemaining}回)</span>
-                        </>
-                      )}
-                    </button>
-                    <p className="text-xs text-slate-500 text-center mt-2 font-medium">
-                      ※生成結果の品質による返金などの対応は行いません。
-                    </p>
+                    <>
+                      <button
+                        onClick={handleGenerate}
+                        disabled={isGenerating}
+                        className="w-full bg-brand-yellow text-slate-900 font-bold py-5 px-6 rounded-lg shadow-lg hover:bg-yellow-400 disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 text-lg hover:-translate-y-1 active:translate-y-0"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <Loader2 className="w-6 h-6 animate-spin text-slate-900" />
+                            AIが調理中...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-6 h-6 text-slate-900" />
+                            写真を生成する
+                            <span className="text-sm font-normal opacity-70 ml-2">(残り {creditsRemaining}回)</span>
+                          </>
+                        )}
+                      </button>
+                      <p className="text-xs text-slate-500 text-center mt-2 font-medium">
+                        ※生成結果の品質による返金などの対応は行いません。
+                      </p>
+                    </>
                   ) : (
                     <div className="bg-red-50 border-2 border-red-100 rounded-xl p-6 text-center">
                       <div className="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
