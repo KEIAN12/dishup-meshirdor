@@ -54,6 +54,8 @@ function doPost(e) {
       row: sheet.getLastRow()
     }));
     output.setMimeType(ContentService.MimeType.JSON);
+    
+    // CORSヘッダーを明示的に設定
     return output;
       
   } catch (error) {
