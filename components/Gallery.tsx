@@ -76,8 +76,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
             <div className="mb-6">
               <div className="bg-slate-50 rounded-xl p-6 border-2 border-slate-200 min-h-[400px]">
                 <BeforeAfterSlider
-                  beforeImage={`http://localhost:3001${selectedItem.originalImageUrl}`}
-                  afterImage={`http://localhost:3001${selectedItem.generatedImageUrl}`}
+                  beforeImage={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${selectedItem.originalImageUrl}`}
+                  afterImage={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${selectedItem.generatedImageUrl}`}
                 />
               </div>
             </div>
@@ -154,7 +154,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
           <p className="text-slate-400 text-sm mt-2">生成した画像がここに保存されます</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {items.map((item) => (
             <div
               key={item.id}
