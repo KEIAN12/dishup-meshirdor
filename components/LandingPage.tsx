@@ -169,7 +169,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
               その写真で、損するのは<br/>もう終わり。
             </h1>
             <p className="text-lg md:text-xl font-bold mb-8 opacity-90 leading-relaxed max-w-lg">
-              スマホ写真を、3秒で<br className="md:hidden"/>「行列店のメニュー」へ。<br/>
+              スマホ写真を、3秒で<br className="md:hidden"/>「行列店のメニュー写真」へ。<br/>
               プロのカメラマンの知識を搭載したAIが、<br className="md:hidden"/>あなたの料理を最高の一枚に。<br/>
               誰でも、簡単に、いつでも。<br/>月額980円〜で始める、<br className="md:hidden"/>お店の「売れる」写真改革。
             </p>
