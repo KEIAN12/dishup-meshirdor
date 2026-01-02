@@ -174,10 +174,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
           </div>
           <button
             onClick={() => onShowSettings?.()}
-            className="p-2 hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
+            className="p-3 bg-brand-yellow hover:bg-yellow-400 rounded-lg transition-all flex-shrink-0 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
             title="設定"
           >
-            <Settings className="w-5 h-5 text-slate-300" />
+            <Settings className="w-5 h-5 text-slate-900" />
           </button>
         </div>
       </div>
