@@ -110,7 +110,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     const checkKey = async () => {
       try {
         // 環境変数からAPIキーをチェック（Viteのprocess.env経由）
-        const envApiKey = (window as any).process?.env?.GEMINI_API_KEY || 
+        const envApiKey = import.meta.env.VITE_GEMINI_API_KEY || 
+                         (window as any).process?.env?.GEMINI_API_KEY || 
                          (window as any).process?.env?.API_KEY;
         
         if (envApiKey && envApiKey.trim() !== '') {
@@ -147,11 +148,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         setHasApiKey(true);
       } else {
         // aistudioが存在しない場合は、環境変数の設定を促す
-        setError("APIキーを環境変数（GEMINI_API_KEY）に設定するか、.env.localファイルに追加してください。");
+        setError("APIキーを環境変数（VITE_GEMINI_API_KEY）に設定するか、.env.localファイルに追加してください。");
       }
     } catch (e) {
       console.error("Error selecting API key:", e);
-      setError("APIキーの選択に失敗しました。環境変数（GEMINI_API_KEY）を設定してください。");
+      setError("APIキーの選択に失敗しました。環境変数（VITE_GEMINI_API_KEY）を設定してください。");
     }
   };
 

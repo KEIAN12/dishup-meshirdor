@@ -64,11 +64,12 @@ export const generateFoodImage = async (
 ): Promise<string> => {
   try {
     // We strictly use gemini-3-pro-image-preview for high quality as requested
-    const apiKey = (window as any).process?.env?.GEMINI_API_KEY || 
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 
+                   (window as any).process?.env?.GEMINI_API_KEY || 
                    (window as any).process?.env?.API_KEY || '';
     
     if (!apiKey || apiKey.trim() === '') {
-      throw new Error("APIキーが設定されていません。環境変数GEMINI_API_KEYを設定してください。");
+      throw new Error("APIキーが設定されていません。環境変数VITE_GEMINI_API_KEYを設定してください。");
     }
     
     const ai = new GoogleGenAI({ apiKey });
@@ -145,11 +146,12 @@ export const generateFoodImageRetake = async (
   adjustmentPrompt: string // User's adjustment instructions
 ): Promise<string> => {
   try {
-    const apiKey = (window as any).process?.env?.GEMINI_API_KEY || 
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 
+                   (window as any).process?.env?.GEMINI_API_KEY || 
                    (window as any).process?.env?.API_KEY || '';
     
     if (!apiKey || apiKey.trim() === '') {
-      throw new Error("APIキーが設定されていません。環境変数GEMINI_API_KEYを設定してください。");
+      throw new Error("APIキーが設定されていません。環境変数VITE_GEMINI_API_KEYを設定してください。");
     }
     
     const ai = new GoogleGenAI({ apiKey });
