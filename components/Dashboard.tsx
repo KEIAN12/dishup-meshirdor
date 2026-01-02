@@ -314,6 +314,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           // ログアウト後、ランディングページにリダイレクト
           window.location.href = '/';
         }}
+        onShowGallery={() => setShowGallery(true)}
+        onShowSettings={() => setShowSettingsModal(true)}
       />
 
       <div className="flex-1 flex flex-col min-h-screen md:min-h-0">
