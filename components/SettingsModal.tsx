@@ -242,6 +242,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       <p className="text-2xl font-black text-brand-yellow">{creditsRemaining}枚</p>
                     </div>
                   </div>
+                  {userInfo?.subscriptionPeriodEnd && userState.plan !== PlanType.FREE && (
+                    <div className="mt-6 pt-6 border-t border-slate-300">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-bold text-slate-500 flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          サブスクリプション有効期限
+                        </p>
+                        <p className="text-base font-bold text-slate-900">
+                          {new Date(userInfo.subscriptionPeriodEnd).toLocaleDateString('ja-JP', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                      {!userInfo.subscriptionId && (
+                        <p className="text-xs text-slate-500 mt-2 font-medium">
+                          ※解約済みですが、有効期限までご利用いただけます。
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </section>
 

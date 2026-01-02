@@ -14,7 +14,7 @@ import { FeedbackModal } from './FeedbackModal';
 import { Gallery } from './Gallery';
 import { SettingsModal } from './SettingsModal';
 import { onAuthStateChange, getCurrentUser, getIdToken } from '../services/authService';
-import { getUserInfo } from '../services/userService';
+import { getUserInfo, UserResponse } from '../services/userService';
 
 interface DashboardProps {
   onNavigate?: (view: 'privacy' | 'terms' | 'commerce') => void;
@@ -47,10 +47,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         try {
           const idToken = await getIdToken();
           if (idToken) {
-            const userInfo = await getUserInfo(idToken);
+            const fetchedUserInfo = await getUserInfo(idToken);
+            setUserInfo(fetchedUserInfo);
             setUserState({
-              plan: userInfo.plan as PlanType,
-              creditsUsed: userInfo.creditsUsed,
+              plan: fetchedUserInfo.plan as PlanType,
+              creditsUsed: fetchedUserInfo.creditsUsed,
             });
           }
         } catch (error) {
@@ -86,6 +87,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [showGallery, setShowGallery] = useState<boolean>(false);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [settingsInitialView, setSettingsInitialView] = useState<'main' | 'plan-selection'>('main');
+  const [userInfo, setUserInfo] = useState<UserResponse | null>(null);
 
   const currentPlan = PLANS[userState.plan];
   const creditsRemaining = Math.max(0, currentPlan.limit - userState.creditsUsed);
@@ -170,6 +172,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     if (!selectedImage) return;
     if (creditsRemaining <= 0) return;
 
+    // サブスクリプションの有効期限をチェック
+    if (userInfo?.subscriptionPeriodEnd) {
+      const periodEnd = new Date(userInfo.subscriptionPeriodEnd);
+      const now = new Date();
+      
+      if (periodEnd < now && userState.plan !== PlanType.FREE) {
+        setError('サブスクリプションの有効期限が切れています。プランを更新してください。');
+        // ユーザー情報を再取得して最新の状態を反映
+        try {
+          const idToken = await getIdToken();
+          if (idToken) {
+            const updatedUserInfo = await getUserInfo(idToken);
+            setUserInfo(updatedUserInfo);
+            setUserState({
+              plan: updatedUserInfo.plan as PlanType,
+              creditsUsed: updatedUserInfo.creditsUsed,
+            });
+          }
+        } catch (error) {
+          console.error('Error refreshing user info:', error);
+        }
+        return;
+      }
+    }
+
     setIsGenerating(true);
     setError(null);
     setGeneratedImageUrl(null);
@@ -210,6 +237,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     if (!retakePrompt.trim()) {
       setError("調整指示を入力してください。");
       return;
+    }
+
+    // サブスクリプションの有効期限をチェック
+    if (userInfo?.subscriptionPeriodEnd) {
+      const periodEnd = new Date(userInfo.subscriptionPeriodEnd);
+      const now = new Date();
+      
+      if (periodEnd < now && userState.plan !== PlanType.FREE) {
+        setError('サブスクリプションの有効期限が切れています。プランを更新してください。');
+        // ユーザー情報を再取得して最新の状態を反映
+        try {
+          const idToken = await getIdToken();
+          if (idToken) {
+            const updatedUserInfo = await getUserInfo(idToken);
+            setUserInfo(updatedUserInfo);
+            setUserState({
+              plan: updatedUserInfo.plan as PlanType,
+              creditsUsed: updatedUserInfo.creditsUsed,
+            });
+          }
+        } catch (error) {
+          console.error('Error refreshing user info:', error);
+        }
+        return;
+      }
     }
 
     setIsRetaking(true);
@@ -576,6 +628,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                         </>
                       )}
                     </button>
+                    <p className="text-xs text-slate-500 text-center mt-2 font-medium">
+                      ※生成結果の品質による返金などの対応は行いません。
+                    </p>
                   ) : (
                     <div className="bg-red-50 border-2 border-red-100 rounded-xl p-6 text-center">
                       <div className="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">

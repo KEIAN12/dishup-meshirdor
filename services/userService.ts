@@ -7,6 +7,7 @@ export interface UserResponse {
   plan: string;
   creditsUsed: number;
   subscriptionId?: string;
+  subscriptionPeriodEnd?: string; // ISO 8601形式の日時（UTC）
   createdAt: string;
   updatedAt: string;
 }

@@ -82,6 +82,9 @@ export const TermsOfService: React.FC<TermsOfServiceProps> = ({ onBack }) => {
                 有料プランをご利用の場合、所定の料金をお支払いいただく必要があります。
                 料金の支払い方法、返金ポリシーについては、特定商取引法に基づく表記をご確認ください。
               </p>
+              <p className="mb-4 font-bold text-slate-900">
+                生成結果の品質による返金などの対応は行いません。
+              </p>
             </section>
 
             <section>

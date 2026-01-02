@@ -228,16 +228,32 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const userId = session.metadata?.userId;
         const planType = session.metadata?.planType;
         
-        if (userId && planType) {
-          // ユーザーのプラン情報を更新
-          await updateUser(userId, {
-            plan: planType,
-            stripeCustomerId: session.customer,
-            subscriptionId: session.subscription,
-            creditsUsed: 0, // プラン変更時にクレジットをリセット
-          });
-          
-          console.log(`Subscription created for user ${userId}: ${planType}`);
+        if (userId && planType && session.subscription) {
+          try {
+            // サブスクリプションオブジェクトを取得して有効期限を取得
+            const subscription = await stripe.subscriptions.retrieve(session.subscription);
+            const periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+            
+            // ユーザーのプラン情報を更新
+            await updateUser(userId, {
+              plan: planType,
+              stripeCustomerId: session.customer,
+              subscriptionId: session.subscription,
+              subscriptionPeriodEnd: periodEnd,
+              creditsUsed: 0, // プラン変更時にクレジットをリセット
+            });
+            
+            console.log(`Subscription created for user ${userId}: ${planType}, period ends: ${periodEnd}`);
+          } catch (error) {
+            console.error('Error retrieving subscription in checkout.session.completed:', error);
+            // エラーが発生しても基本的な情報は更新
+            await updateUser(userId, {
+              plan: planType,
+              stripeCustomerId: session.customer,
+              subscriptionId: session.subscription,
+              creditsUsed: 0,
+            });
+          }
         }
         break;
       }
@@ -245,6 +261,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
         const customerId = subscription.customer;
+        
         
         try {
           // 顧客IDからユーザーを取得
@@ -255,13 +272,18 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
             const priceId = subscription.items.data[0].price.id;
             const newPlanType = await getPlanTypeFromStripePriceId(priceId);
             
-            // ユーザーのプランを更新
+            // サブスクリプションの有効期限を取得（UnixタイムスタンプをISO 8601に変換）
+            const periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+            
+            // ユーザーのプランと有効期限を更新
             await updateUser(user.userId, {
               plan: newPlanType,
               subscriptionId: subscription.id,
+              subscriptionPeriodEnd: periodEnd,
             });
             
-            console.log(`User ${user.userId} subscription updated to ${newPlanType} plan.`);
+            console.log(`User ${user.userId} subscription updated to ${newPlanType} plan, period ends: ${periodEnd}`);
+          } else if (!user) {
           }
         } catch (error) {
           console.error('Error processing subscription update:', error);
@@ -272,16 +294,40 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         // サブスクリプションのキャンセルを処理
-        // ユーザーをFREEプランに戻す
+        // 契約期間終了まで有効にするため、subscriptionPeriodEndを維持
         try {
           const users = await readUsers();
-          const user = users.find(u => u.subscriptionId === subscription.id);
+          // subscriptionIdで検索（既にnullになっている可能性があるため、stripeCustomerIdでも検索を試みる）
+          let user = users.find(u => u.subscriptionId === subscription.id);
+          if (!user && subscription.customer) {
+            // subscriptionIdで見つからない場合は、stripeCustomerIdで検索
+            user = users.find(u => u.stripeCustomerId === subscription.customer);
+          }
           if (user) {
-            await updateUser(user.userId, {
-              plan: PlanType.FREE,
-              subscriptionId: null,
-            });
-            console.log(`Subscription canceled for user ${user.userId}`);
+            // サブスクリプションの有効期限を取得（UnixタイムスタンプをISO 8601に変換）
+            const periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+            const now = new Date();
+            const periodEndDate = new Date(periodEnd);
+            if (periodEndDate > now) {
+              // 有効期限が未来の場合は、プランを維持してsubscriptionPeriodEndを設定
+              // subscriptionIdはnullにして、解約済みであることを示す
+              // プランは明示的に更新しない（既存のプランを維持）
+              await updateUser(user.userId, {
+                subscriptionId: null, // 解約済みを示す
+                subscriptionPeriodEnd: periodEnd, // 有効期限は維持
+                // planは更新しない（既存のプランを維持）
+              });
+              console.log(`Subscription canceled for user ${user.userId}, but plan ${user.plan} remains active until ${periodEnd}`);
+            } else {
+              // 有効期限が過去の場合は、即座にFREEプランに戻す
+              await updateUser(user.userId, {
+                plan: PlanType.FREE,
+                subscriptionId: null,
+                subscriptionPeriodEnd: null,
+              });
+              console.log(`Subscription canceled for user ${user.userId}, switching to FREE plan (period already ended)`);
+            }
+          } else {
           }
         } catch (error) {
           console.error('Error processing subscription deletion:', error);

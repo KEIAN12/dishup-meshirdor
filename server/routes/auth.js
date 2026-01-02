@@ -64,6 +64,7 @@ async function getOrCreateUser(decodedToken) {
       plan: PlanType.FREE,
       creditsUsed: 0,
       subscriptionId: null,
+      subscriptionPeriodEnd: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -72,6 +73,27 @@ async function getOrCreateUser(decodedToken) {
   } else {
     // 既存ユーザーの情報を更新（メールアドレスなど）
     user.email = email || user.email;
+    
+    
+    // サブスクリプションの有効期限をチェック
+    if (user.subscriptionPeriodEnd) {
+      const periodEnd = new Date(user.subscriptionPeriodEnd);
+      const now = new Date();
+      
+      // 有効期限が過ぎている場合はFREEプランに戻す
+      if (periodEnd < now && user.plan !== PlanType.FREE) {
+        user.plan = PlanType.FREE;
+        user.subscriptionId = null;
+        user.subscriptionPeriodEnd = null;
+        console.log(`User ${userId} subscription expired, switching to FREE plan`);
+      }
+    } else if (user.plan !== PlanType.FREE && !user.subscriptionId) {
+      // 有料プランなのにsubscriptionPeriodEndがnullでsubscriptionIdもnullの場合
+      // これは異常な状態なので、FREEプランに戻す
+      user.plan = PlanType.FREE;
+      console.log(`User ${userId} has paid plan without subscription, switching to FREE plan`);
+    }
+    
     user.updatedAt = new Date().toISOString();
     await writeUsers(users);
   }
