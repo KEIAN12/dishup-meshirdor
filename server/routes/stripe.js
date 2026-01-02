@@ -18,10 +18,22 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Stripe初期化
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
-});
+// Stripe初期化（環境変数がない場合はnull）
+let stripe = null;
+try {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  if (stripeSecretKey) {
+    stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2024-12-18.acacia',
+    });
+    console.log('Stripe initialized');
+  } else {
+    console.warn('⚠️  Stripe: STRIPE_SECRET_KEY環境変数が設定されていません。決済機能は使用できません。');
+  }
+} catch (error) {
+  console.error('Error initializing Stripe:', error);
+  console.warn('⚠️  Stripeの初期化に失敗しましたが、サーバーは起動を続けます。');
+}
 
 // Price Lookup Keys
 const PRICE_LOOKUP_KEYS = {
@@ -90,6 +102,10 @@ async function authenticateToken(req, res, next) {
 
 // POST /api/stripe/create-checkout-session - Checkout Sessionを作成
 router.post('/create-checkout-session', authenticateToken, async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripeが初期化されていません。環境変数STRIPE_SECRET_KEYを設定してください。' });
+  }
+  
   try {
     const { planType } = req.body;
     const userId = req.user.uid;
@@ -151,6 +167,9 @@ router.post('/create-checkout-session', authenticateToken, async (req, res) => {
 
 // POST /api/stripe/webhook - Webhook処理
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripeが初期化されていません。環境変数STRIPE_SECRET_KEYを設定してください。' });
+  }
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
@@ -227,6 +246,9 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
 // POST /api/stripe/create-portal-session - 顧客ポータルセッションを作成
 router.post('/create-portal-session', authenticateToken, async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripeが初期化されていません。環境変数STRIPE_SECRET_KEYを設定してください。' });
+  }
   try {
     const userId = req.user.uid;
     const user = await getUserById(userId);
