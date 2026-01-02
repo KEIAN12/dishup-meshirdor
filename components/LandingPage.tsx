@@ -164,8 +164,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
             <div className="inline-block bg-white border-2 border-slate-900 px-3 py-1 rounded-full text-xs font-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               Google 最新AI技術搭載
             </div>
-            <h1 className="text-4xl md:text-6xl font-black leading-[1.15] mb-6 tracking-tight text-slate-900">
-              その写真で、<br/>損するのはもう終わり。
+            <h1 className="text-3xl md:text-5xl font-black leading-[1.15] mb-6 tracking-tight text-slate-900">
+              その写真で、損するのは<br/>もう終わり。
             </h1>
             <p className="text-lg md:text-xl font-bold mb-8 opacity-90 leading-relaxed max-w-lg">
               スマホ写真を、3秒で<br className="md:hidden"/>「行列店のメニュー」へ。<br/>
