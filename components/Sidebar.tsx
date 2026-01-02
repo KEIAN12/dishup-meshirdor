@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PlanType, UserState } from '../types';
 import { PLANS } from '../constants';
-import { Settings, Menu, User, ChevronRight, Image as ImageIcon, X } from 'lucide-react';
+import { Settings, Menu, User, ChevronRight, Image as ImageIcon, X, Zap } from 'lucide-react';
 
 interface SidebarProps {
   userState: UserState;
@@ -12,9 +12,10 @@ interface SidebarProps {
   onLogout?: () => void;
   onShowGallery?: () => void;
   onShowSettings?: () => void;
+  onShowPlanSelection?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlanChange, isOpen, onClose, onLogout, onShowGallery, onShowSettings }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlanChange, isOpen, onClose, onLogout, onShowGallery, onShowSettings, onShowPlanSelection }) => {
   const currentPlan = PLANS[userState.plan];
   const creditsRemaining = Math.max(0, currentPlan.limit - userState.creditsUsed);
 
@@ -99,6 +100,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
               <ChevronRight className="w-4 h-4" />
             </div>
             <p className="text-xs text-slate-500 mt-1">最大5枚まで保存可能</p>
+          </button>
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <Zap className="w-3 h-3" />
+            プラン管理
+          </h2>
+          <button
+            onClick={() => onShowPlanSelection?.()}
+            className="w-full text-left px-4 py-3 rounded-lg text-sm transition-all border bg-transparent text-slate-400 border-slate-700 hover:border-slate-500 hover:text-white hover:bg-slate-800"
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-bold">プランを切り替える</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+            <p className="text-xs text-slate-500 mt-1">プラン変更・解約</p>
           </button>
         </div>
 

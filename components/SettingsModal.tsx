@@ -13,6 +13,7 @@ interface SettingsModalProps {
   userState: UserState;
   currentUser: { displayName: string | null; email: string | null; photoURL: string | null } | null;
   onLogout?: () => void;
+  initialView?: 'main' | 'plan-selection';
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
@@ -20,19 +21,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose, 
   userState,
   currentUser,
-  onLogout 
+  onLogout,
+  initialView = 'main'
 }) => {
   const [userInfo, setUserInfo] = useState<UserResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpeningPortal, setIsOpeningPortal] = useState<boolean>(false);
-  const [showPlanSelection, setShowPlanSelection] = useState<boolean>(false);
+  const [showPlanSelection, setShowPlanSelection] = useState<boolean>(initialView === 'plan-selection');
   const [isChangingPlan, setIsChangingPlan] = useState<boolean>(false);
 
   useEffect(() => {
     if (isOpen) {
       loadUserInfo();
+      // initialViewに応じてプラン切り替え画面を表示
+      setShowPlanSelection(initialView === 'plan-selection');
     }
-  }, [isOpen]);
+  }, [isOpen, initialView]);
 
   const loadUserInfo = async () => {
     try {

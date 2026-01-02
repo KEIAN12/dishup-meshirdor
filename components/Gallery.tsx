@@ -154,14 +154,14 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
           <p className="text-slate-400 text-sm mt-2">生成した画像がここに保存されます</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
+        <div className={items.length <= 5 ? "grid grid-cols-1 gap-4 max-w-md mx-auto" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
           {items.map((item) => (
             <div
               key={item.id}
               className="relative group cursor-pointer"
               onClick={() => handleItemClick(item)}
             >
-              <div className="aspect-square rounded-lg overflow-hidden border-2 border-slate-200 hover:border-slate-900 transition-colors bg-slate-100">
+              <div className={`${items.length <= 5 ? 'aspect-[4/3]' : 'aspect-square'} rounded-lg overflow-hidden border-2 border-slate-200 hover:border-slate-900 transition-colors bg-slate-100 max-w-md mx-auto`}>
                 <img
                   src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${item.generatedImageUrl}`}
                   alt="Gallery item"

@@ -63,9 +63,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         setIsLoadingUser(false);
         setCurrentUser(null);
         // 未認証の場合はランディングページにリダイレクト
-        if (onNavigate) {
-          // ランディングページに戻す処理はApp.tsxで管理
-        }
+        window.location.href = '/';
       }
     });
     
@@ -87,6 +85,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [foodDescription, setFoodDescription] = useState<string>('');
   const [showGallery, setShowGallery] = useState<boolean>(false);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+  const [settingsInitialView, setSettingsInitialView] = useState<'main' | 'plan-selection'>('main');
 
   const currentPlan = PLANS[userState.plan];
   const creditsRemaining = Math.max(0, currentPlan.limit - userState.creditsUsed);
@@ -315,7 +314,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           window.location.href = '/';
         }}
         onShowGallery={() => setShowGallery(true)}
-        onShowSettings={() => setShowSettingsModal(true)}
+        onShowSettings={() => {
+          setSettingsInitialView('main');
+          setShowSettingsModal(true);
+        }}
+        onShowPlanSelection={() => {
+          setSettingsInitialView('plan-selection');
+          setShowSettingsModal(true);
+        }}
       />
 
       <div className="flex-1 flex flex-col min-h-screen md:min-h-0">
@@ -817,6 +823,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             onLogout={() => {
               // ログアウト処理はApp.tsxで管理
             }}
+            initialView={settingsInitialView}
           />
         )}
       </div>
