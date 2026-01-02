@@ -391,7 +391,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
                         <img
-                          src={`http://localhost:3001${selectedAsset.imageUrl}`}
+                          src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${selectedAsset.imageUrl}`}
                           alt={selectedAsset.name}
                           className="w-full h-full object-cover"
                         />

@@ -163,7 +163,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
             >
               <div className="aspect-square rounded-lg overflow-hidden border-2 border-slate-200 hover:border-slate-900 transition-colors bg-slate-100">
                 <img
-                  src={`http://localhost:3001${item.generatedImageUrl}`}
+                  src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${item.generatedImageUrl}`}
                   alt="Gallery item"
                   className="w-full h-full object-cover"
                 />

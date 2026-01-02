@@ -244,7 +244,7 @@ export const AssetManager: React.FC<AssetManagerProps> = ({
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
                       <img
-                        src={`http://localhost:3001${asset.imageUrl}`}
+                        src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${asset.imageUrl}`}
                         alt={asset.name}
                         className="w-full h-full object-cover"
                       />
