@@ -151,6 +151,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
           <div className="flex items-center gap-6">
             <a href="#features" className="hidden md:block text-sm font-bold text-slate-600 hover:text-slate-900">機能</a>
             <a href="#pricing" className="hidden md:block text-sm font-bold text-slate-600 hover:text-slate-900">料金</a>
+            <a href="#faq" className="hidden md:block text-sm font-bold text-slate-600 hover:text-slate-900">よくある質問</a>
             <LoginButton onLoginSuccess={onLogin} />
           </div>
         </div>
@@ -610,7 +611,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
       </section>
 
       {/* 7. FAQ */}
-      <section className="py-24 bg-white">
+      <section id="faq" className="py-24 bg-white">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-3xl font-black text-center mb-12">よくある質問</h2>
           <div className="space-y-4">
@@ -618,7 +619,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
               { q: "実際の料理と全然違うものになりませんか？", a: "AIは元の形状を維持するよう調整されていますが、具材の細部が微修正される場合があります。「イメージ写真」としてお使いいただくことを推奨します。" },
               { q: "印刷に使えますか？", a: "はい。A4サイズ程度のメニュー表やチラシであれば、十分綺麗に印刷できる高解像度データ(2K)をお渡しします。" },
               { q: "スマホだけで使えますか？", a: "はい、ブラウザ（SafariやChrome）から全ての機能をご利用いただけます。アプリのインストールも不要です。" },
-              { q: "解約はすぐにできますか？", a: "はい、マイページからいつでも解約可能です。契約期間の縛りはありません。" }
+              { q: "解約はすぐにできますか？", a: "はい、マイページからいつでも解約可能です。契約期間の縛りはありません。" },
+              { q: "生成された写真の著作権は誰にありますか？", a: "生成された写真の著作権は、お客様に帰属します。商用利用も可能です。メニュー表やSNS投稿、広告など、お好きな用途でご利用いただけます。" },
+              { q: "無料プランでも高品質な写真が生成できますか？", a: "はい、無料プランでも有料プランと同じAIエンジンを使用するため、同じ高品質な写真を生成できます。違いは月間の生成枚数のみです。" },
+              { q: "生成にどのくらい時間がかかりますか？", a: "通常、1枚の写真の生成には約10〜30秒程度かかります。サーバーの負荷状況により、多少前後する場合があります。" }
             ].map((item, i) => (
               <div key={i} className="border border-slate-200 rounded-xl overflow-hidden">
                 <button 
