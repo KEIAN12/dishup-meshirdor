@@ -6,12 +6,13 @@ import { Gallery } from './Gallery';
 
 interface SidebarProps {
   userState: UserState;
+  currentUser: { displayName: string | null; email: string | null; photoURL: string | null } | null;
   onPlanChange: (plan: PlanType) => void;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ userState, onPlanChange, isOpen, onClose }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlanChange, isOpen, onClose }) => {
   const currentPlan = PLANS[userState.plan];
   const creditsRemaining = Math.max(0, currentPlan.limit - userState.creditsUsed);
   const [showGallery, setShowGallery] = useState<boolean>(false);
@@ -137,11 +138,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, onPlanChange, isOpe
 
       <div className="p-6 border-t border-slate-800 bg-slate-900">
         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer">
-          <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center font-bold text-sm text-slate-300">
-            <User className="w-5 h-5" />
-          </div>
+          {currentUser?.photoURL ? (
+            <img 
+              src={currentUser.photoURL} 
+              alt={currentUser.displayName || 'User'} 
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center font-bold text-sm text-slate-300">
+              <User className="w-5 h-5" />
+            </div>
+          )}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-white truncate">山田 花子 様</p>
+            <p className="text-sm font-bold text-white truncate">
+              {currentUser?.displayName ? `${currentUser.displayName} 様` : currentUser?.email || 'ユーザー'}
+            </p>
             <p className="text-xs text-slate-400 truncate font-medium">{currentPlan.name}</p>
           </div>
         </div>

@@ -24,6 +24,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
+  const [currentUser, setCurrentUser] = useState<{ displayName: string | null; email: string | null; photoURL: string | null } | null>(null);
   
   // App State
   const [userState, setUserState] = useState<UserState>({
@@ -36,6 +37,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     const unsubscribe = onAuthStateChange(async (user) => {
       if (user) {
         setIsAuthenticated(true);
+        setCurrentUser({
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+        });
         try {
           const idToken = await getIdToken();
           if (idToken) {
@@ -53,6 +59,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       } else {
         setIsAuthenticated(false);
         setIsLoadingUser(false);
+        setCurrentUser(null);
         // 未認証の場合はランディングページにリダイレクト
         if (onNavigate) {
           // ランディングページに戻す処理はApp.tsxで管理
@@ -294,7 +301,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white font-sans text-slate-900">
       <Sidebar 
-        userState={userState} 
+        userState={userState}
+        currentUser={currentUser}
         onPlanChange={(plan) => setUserState({ plan, creditsUsed: 0 })} 
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
