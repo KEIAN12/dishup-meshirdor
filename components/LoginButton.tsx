@@ -36,7 +36,7 @@ export const LoginButton: React.FC<LoginButtonProps> = ({
       <button
         onClick={handleGoogleLogin}
         disabled={isLoading}
-        className="bg-white text-slate-900 font-bold py-2.5 px-5 rounded-lg hover:bg-slate-50 transition-all flex items-center gap-2 text-sm border-2 border-slate-300 hover:border-slate-900 disabled:opacity-70 disabled:cursor-not-allowed"
+        className="bg-white text-slate-900 font-bold py-3 px-5 rounded-lg hover:bg-slate-50 transition-all flex items-center gap-2 text-sm border-2 border-slate-300 hover:border-slate-900 disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {isLoading ? (
           <>

@@ -41,7 +41,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ selectedImage, onI
             onImageSelect(null);
             if (fileInputRef.current) fileInputRef.current.value = '';
           }}
-          className="absolute top-3 right-3 bg-slate-900 text-white p-2 rounded-full shadow-lg hover:bg-red-500 transition-all z-10"
+          className="absolute top-3 right-3 bg-slate-900 text-white p-3 rounded-full shadow-lg hover:bg-red-500 transition-all z-10"
         >
           <X className="w-4 h-4" />
         </button>

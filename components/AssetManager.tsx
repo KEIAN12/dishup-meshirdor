@@ -105,7 +105,7 @@ export const AssetManager: React.FC<AssetManagerProps> = ({
           <h3 className="text-lg font-black text-slate-900">店舗の雰囲気を管理</h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-3 hover:bg-slate-100 rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-slate-600" />
           </button>
@@ -265,7 +265,7 @@ export const AssetManager: React.FC<AssetManagerProps> = ({
                         handleDelete(asset.id);
                       }}
                       disabled={deleting === asset.id}
-                      className="p-2 hover:bg-red-50 rounded-lg transition-colors text-slate-400 hover:text-red-600 disabled:opacity-50"
+                      className="p-3 hover:bg-red-50 rounded-lg transition-colors text-slate-400 hover:text-red-600 disabled:opacity-50"
                     >
                       {deleting === asset.id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

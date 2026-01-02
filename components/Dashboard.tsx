@@ -307,7 +307,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-3 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <Menu className="w-6 h-6 text-slate-900" />
               </button>
@@ -407,7 +407,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                       </div>
                       <button
                         onClick={() => setSelectedAsset(null)}
-                        className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                        className="p-3 hover:bg-slate-200 rounded-lg transition-colors"
                       >
                         <X className="w-4 h-4 text-slate-600" />
                       </button>
@@ -698,7 +698,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <h3 className="text-xl font-black text-slate-900">店舗の雰囲気を管理</h3>
                 <button
                   onClick={() => setShowAssetManager(false)}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-3 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5 text-slate-600" />
                 </button>

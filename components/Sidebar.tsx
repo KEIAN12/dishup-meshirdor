@@ -55,7 +55,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, onPlanChange, isOpe
             {/* Mobile Close Button */}
             <button
               onClick={onClose}
-              className="md:hidden p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              className="md:hidden p-3 hover:bg-slate-800 rounded-lg transition-colors"
             >
               <X className="w-5 h-5 text-white" />
             </button>

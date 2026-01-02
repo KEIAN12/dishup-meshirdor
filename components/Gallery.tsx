@@ -66,7 +66,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
             <h3 className="text-xl font-black text-slate-900">ギャラリー詳細</h3>
             <button
               onClick={() => setSelectedItem(null)}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-3 hover:bg-slate-100 rounded-lg transition-colors"
             >
               <X className="w-5 h-5 text-slate-600" />
             </button>
@@ -174,7 +174,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
                   handleDelete(item.id);
                 }}
                 disabled={deleting === item.id}
-                className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600"
+                className="absolute top-2 right-2 p-3 bg-white/90 backdrop-blur-sm rounded-full opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600"
               >
                 {deleting === item.id ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
