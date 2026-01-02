@@ -798,7 +798,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto border-4 border-slate-900">
               <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between z-10">
-                <h2 className="text-2xl font-black text-slate-900">マイ・ギャラリー</h2>
+                <h2 className="text-2xl font-black text-slate-900">生成履歴</h2>
                 <button
                   onClick={() => setShowGallery(false)}
                   className="p-3 hover:bg-slate-100 rounded-lg transition-colors"

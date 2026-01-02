@@ -89,17 +89,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
         <div className="mb-8">
           <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
             <ImageIcon className="w-3 h-3" />
-            マイ・ギャラリー
+            生成履歴
           </h2>
           <button
             onClick={() => onShowGallery?.()}
             className="w-full text-left px-4 py-3 rounded-lg text-sm transition-all border bg-transparent text-slate-400 border-slate-700 hover:border-slate-500 hover:text-white hover:bg-slate-800"
           >
             <div className="flex items-center justify-between">
-              <span className="font-bold">保存済み画像を見る</span>
+              <span className="font-bold">生成履歴を見る</span>
               <ChevronRight className="w-4 h-4" />
             </div>
-            <p className="text-xs text-slate-500 mt-1">最大5枚まで保存可能</p>
+            <p className="text-xs text-slate-500 mt-1">直近5件の生成履歴</p>
           </button>
         </div>
 

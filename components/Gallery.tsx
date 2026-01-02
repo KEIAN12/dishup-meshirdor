@@ -24,9 +24,13 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
     try {
       setLoading(true);
       const galleryItems = await galleryService.getAll();
-      setItems(galleryItems);
+      // 最新の生成順（降順）でソート
+      const sortedItems = [...galleryItems].sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setItems(sortedItems);
     } catch (err: any) {
-      setError(err.message || 'ギャラリーの読み込みに失敗しました');
+      setError(err.message || '生成履歴の読み込みに失敗しました');
     } finally {
       setLoading(false);
     }
@@ -129,7 +133,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
     <div className="space-y-4">
       {onClose && (
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-black text-slate-900">マイ・ギャラリー</h3>
+          <h3 className="text-lg font-black text-slate-900">生成履歴</h3>
           <button
             onClick={onClose}
             className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
@@ -150,8 +154,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
       ) : items.length === 0 ? (
         <div className="text-center py-12 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
           <ImageIcon className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-400 font-bold">ギャラリーは空です</p>
-          <p className="text-slate-400 text-sm mt-2">生成した画像がここに保存されます</p>
+          <p className="text-slate-400 font-bold">生成履歴はありません</p>
+          <p className="text-slate-400 text-sm mt-2">生成した画像の履歴がここに表示されます</p>
         </div>
       ) : (
         <div className={items.length <= 5 ? "grid grid-cols-1 gap-4 max-w-md mx-auto" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
@@ -192,7 +196,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onClose, onSelect }) => {
 
       {items.length > 0 && (
         <div className="text-center text-xs text-slate-500 font-medium pt-2">
-          {items.length} / 5 枚保存中
+          直近 {items.length} 件の生成履歴
         </div>
       )}
     </div>
