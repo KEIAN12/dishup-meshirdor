@@ -306,6 +306,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         onPlanChange={(plan) => setUserState({ plan, creditsUsed: 0 })} 
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        onLogout={() => {
+          // ログアウト後、ランディングページにリダイレクト
+          window.location.href = '/';
+        }}
       />
 
       <div className="flex-1 flex flex-col min-h-screen md:min-h-0">

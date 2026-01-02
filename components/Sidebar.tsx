@@ -3,6 +3,7 @@ import { PlanType, UserState } from '../types';
 import { PLANS } from '../constants';
 import { Settings, Menu, User, ChevronRight, Image as ImageIcon, X } from 'lucide-react';
 import { Gallery } from './Gallery';
+import { SettingsModal } from './SettingsModal';
 
 interface SidebarProps {
   userState: UserState;
@@ -10,12 +11,14 @@ interface SidebarProps {
   onPlanChange: (plan: PlanType) => void;
   isOpen: boolean;
   onClose: () => void;
+  onLogout?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlanChange, isOpen, onClose }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlanChange, isOpen, onClose, onLogout }) => {
   const currentPlan = PLANS[userState.plan];
   const creditsRemaining = Math.max(0, currentPlan.limit - userState.creditsUsed);
   const [showGallery, setShowGallery] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   return (
     <>
@@ -137,7 +140,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
       </div>
 
       <div className="p-6 border-t border-slate-800 bg-slate-900">
-        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer">
+        <div className="flex items-center gap-3">
           {currentUser?.photoURL ? (
             <img 
               src={currentUser.photoURL} 
@@ -155,8 +158,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
             </p>
             <p className="text-xs text-slate-400 truncate font-medium">{currentPlan.name}</p>
           </div>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="p-2 hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
+            title="設定"
+          >
+            <Settings className="w-5 h-5 text-slate-300" />
+          </button>
         </div>
       </div>
+
+      {showSettings && (
+        <SettingsModal
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          userState={userState}
+          currentUser={currentUser}
+          onLogout={onLogout}
+        />
+      )}
 
       {showGallery && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">

@@ -1,4 +1,5 @@
 import { GalleryItem } from '../types';
+import { getIdToken } from './authService';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 
@@ -8,7 +9,19 @@ export const galleryService = {
    */
   async getAll(): Promise<GalleryItem[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/gallery`);
+      const idToken = await getIdToken();
+      if (!idToken) {
+        throw new Error('認証が必要です。ログインしてください。');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/gallery`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'サーバーエラーが発生しました' }));
         throw new Error(errorData.error || 'ギャラリーの取得に失敗しました');
@@ -33,9 +46,15 @@ export const galleryService = {
     aspectRatio: string
   ): Promise<GalleryItem> {
     try {
+      const idToken = await getIdToken();
+      if (!idToken) {
+        throw new Error('認証が必要です。ログインしてください。');
+      }
+
       const response = await fetch(`${API_BASE_URL}/gallery`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${idToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -63,8 +82,17 @@ export const galleryService = {
    */
   async delete(id: string): Promise<void> {
     try {
+      const idToken = await getIdToken();
+      if (!idToken) {
+        throw new Error('認証が必要です。ログインしてください。');
+      }
+
       const response = await fetch(`${API_BASE_URL}/gallery/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {

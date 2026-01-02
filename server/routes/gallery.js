@@ -2,43 +2,61 @@ import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { verifyIdToken } from '../services/firebaseAdmin.js';
 import * as githubService from '../services/githubService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const router = express.Router();
-const STORAGE_FILE = path.join(__dirname, '../storage/gallery.json');
+const GALLERY_DIR = path.join(__dirname, '../storage/gallery');
 const UPLOAD_DIR = path.join(__dirname, '../storage/uploads/gallery');
 
 // Ensure directories exist
 async function ensureDirectories() {
-  await fs.mkdir(path.dirname(STORAGE_FILE), { recursive: true });
+  await fs.mkdir(GALLERY_DIR, { recursive: true });
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
 }
 
-// Initialize storage file if it doesn't exist
-async function initStorage() {
-  try {
-    await fs.access(STORAGE_FILE);
-  } catch {
-    await fs.writeFile(STORAGE_FILE, JSON.stringify([]), 'utf-8');
-  }
+// Get user-specific storage file path
+function getUserGalleryFile(userId) {
+  return path.join(GALLERY_DIR, `${userId}.json`);
 }
 
-// Read gallery data
-async function readGallery() {
+// Read gallery data for a specific user
+async function readGallery(userId) {
   try {
-    const data = await fs.readFile(STORAGE_FILE, 'utf-8');
+    const storageFile = getUserGalleryFile(userId);
+    const data = await fs.readFile(storageFile, 'utf-8');
     return JSON.parse(data);
   } catch {
     return [];
   }
 }
 
-// Write gallery data
-async function writeGallery(data) {
-  await fs.writeFile(STORAGE_FILE, JSON.stringify(data, null, 2), 'utf-8');
+// Write gallery data for a specific user
+async function writeGallery(userId, data) {
+  const storageFile = getUserGalleryFile(userId);
+  await fs.writeFile(storageFile, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+// 認証ミドルウェア
+async function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  
+  if (!token) {
+    return res.status(401).json({ error: '認証トークンが提供されていません' });
+  }
+  
+  try {
+    const decodedToken = await verifyIdToken(token);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return res.status(403).json({ error: '無効なトークンです' });
+  }
 }
 
 // Save base64 image to file
@@ -65,33 +83,15 @@ async function saveImage(base64Data, filename) {
 }
 
 // Initialize on startup
-ensureDirectories().then(() => initStorage());
+ensureDirectories();
 
-// GET /api/gallery - Get all gallery items
-router.get('/', async (req, res) => {
+// GET /api/gallery - Get all gallery items for the authenticated user
+router.get('/', authenticateToken, async (req, res) => {
   try {
-    // まずローカルから読み込み
-    let gallery = await readGallery();
+    const userId = req.user.uid;
+    let gallery = await readGallery(userId);
     
-    // GitHub連携が有効な場合は、GitHubからも取得を試みる
-    if (githubService.isGitHubEnabled()) {
-      try {
-        const gistId = await githubService.getGistId();
-        if (gistId) {
-          const githubGallery = await githubService.getGist(gistId);
-          // GitHubのデータが新しい場合はマージ（GitHubを優先）
-          if (githubGallery && githubGallery.length > 0) {
-            // 最新のデータを優先（GitHubのデータを使用）
-            gallery = githubGallery;
-            // ローカルにも保存（同期）
-            await writeGallery(gallery);
-          }
-        }
-      } catch (githubError) {
-        console.warn('Failed to sync from GitHub, using local data:', githubError.message);
-        // GitHubエラーは無視してローカルデータを使用
-      }
-    }
+    // GitHub連携はユーザーごとの分離後は使用しない（必要に応じて後で実装）
     
     res.json(gallery);
   } catch (error) {
@@ -101,15 +101,16 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/gallery - Save new gallery item
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
+    const userId = req.user.uid;
     const { originalImageUrl, generatedImageUrl, mode, aspectRatio } = req.body;
 
     if (!originalImageUrl || !generatedImageUrl || !mode || !aspectRatio) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const gallery = await readGallery();
+    const gallery = await readGallery(userId);
 
     // Save images
     const originalFilename = `original_${Date.now()}.png`;
@@ -155,28 +156,7 @@ router.post('/', async (req, res) => {
     }
 
     gallery.push(newItem);
-    await writeGallery(gallery);
-
-    // GitHub連携が有効な場合は、GitHubにも保存
-    if (githubService.isGitHubEnabled()) {
-      try {
-        let gistId = await githubService.getGistId();
-        
-        if (gistId) {
-          // 既存のGistを更新
-          await githubService.updateGist(gistId, gallery);
-        } else {
-          // 新しいGistを作成
-          gistId = await githubService.createGist(gallery);
-          await githubService.saveGistId(gistId);
-        }
-        
-        console.log('Gallery saved to GitHub Gist:', gistId);
-      } catch (githubError) {
-        console.warn('Failed to save to GitHub, but local save succeeded:', githubError.message);
-        // GitHubエラーは無視（ローカル保存は成功している）
-      }
-    }
+    await writeGallery(userId, gallery);
 
     res.json(newItem);
   } catch (error) {
@@ -186,10 +166,11 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE /api/gallery/:id - Delete gallery item
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
+    const userId = req.user.uid;
     const { id } = req.params;
-    const gallery = await readGallery();
+    const gallery = await readGallery(userId);
     const itemIndex = gallery.findIndex(item => item.id === id);
 
     if (itemIndex === -1) {
@@ -214,20 +195,7 @@ router.delete('/:id', async (req, res) => {
 
     // Remove from gallery
     gallery.splice(itemIndex, 1);
-    await writeGallery(gallery);
-
-    // GitHub連携が有効な場合は、GitHubからも削除
-    if (githubService.isGitHubEnabled()) {
-      try {
-        const gistId = await githubService.getGistId();
-        if (gistId) {
-          await githubService.updateGist(gistId, gallery);
-        }
-      } catch (githubError) {
-        console.warn('Failed to delete from GitHub, but local delete succeeded:', githubError.message);
-        // GitHubエラーは無視（ローカル削除は成功している）
-      }
-    }
+    await writeGallery(userId, gallery);
 
     res.json({ message: 'Gallery item deleted', id });
   } catch (error) {
