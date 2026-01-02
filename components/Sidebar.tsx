@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { PlanType, UserState } from '../types';
 import { PLANS } from '../constants';
 import { Settings, Menu, User, ChevronRight, Image as ImageIcon, X } from 'lucide-react';
-import { Gallery } from './Gallery';
-import { SettingsModal } from './SettingsModal';
 
 interface SidebarProps {
   userState: UserState;
@@ -12,13 +10,13 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout?: () => void;
+  onShowGallery?: () => void;
+  onShowSettings?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlanChange, isOpen, onClose, onLogout }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlanChange, isOpen, onClose, onLogout, onShowGallery, onShowSettings }) => {
   const currentPlan = PLANS[userState.plan];
   const creditsRemaining = Math.max(0, currentPlan.limit - userState.creditsUsed);
-  const [showGallery, setShowGallery] = useState<boolean>(false);
-  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   return (
     <>
@@ -93,7 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
             マイ・ギャラリー
           </h2>
           <button
-            onClick={() => setShowGallery(true)}
+            onClick={() => onShowGallery?.()}
             className="w-full text-left px-4 py-3 rounded-lg text-sm transition-all border bg-transparent text-slate-400 border-slate-700 hover:border-slate-500 hover:text-white hover:bg-slate-800"
           >
             <div className="flex items-center justify-between">
@@ -126,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
             <p className="text-xs text-slate-400 truncate font-medium">{currentPlan.name}</p>
           </div>
           <button
-            onClick={() => setShowSettings(true)}
+            onClick={() => onShowSettings?.()}
             className="p-2 hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
             title="設定"
           >
@@ -135,34 +133,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ userState, currentUser, onPlan
         </div>
       </div>
 
-      {showSettings && (
-        <SettingsModal
-          isOpen={showSettings}
-          onClose={() => setShowSettings(false)}
-          userState={userState}
-          currentUser={currentUser}
-          onLogout={onLogout}
-        />
-      )}
-
-      {showGallery && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-slate-200 p-4 flex items-center justify-between z-10">
-              <h3 className="text-xl font-black text-slate-900">マイ・ギャラリー</h3>
-              <button
-                onClick={() => setShowGallery(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-slate-600" />
-              </button>
-            </div>
-            <div className="p-6">
-              <Gallery />
-            </div>
-          </div>
-        </div>
-      )}
       </div>
     </>
   );

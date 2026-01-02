@@ -11,6 +11,8 @@ import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { AssetManager } from './AssetManager';
 import { AssetItem } from '../types';
 import { FeedbackModal } from './FeedbackModal';
+import { Gallery } from './Gallery';
+import { SettingsModal } from './SettingsModal';
 import { onAuthStateChange, getCurrentUser, getIdToken } from '../services/authService';
 import { getUserInfo } from '../services/userService';
 
@@ -83,6 +85,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [retakePrompt, setRetakePrompt] = useState<string>('');
   const [isRetaking, setIsRetaking] = useState<boolean>(false);
   const [foodDescription, setFoodDescription] = useState<string>('');
+  const [showGallery, setShowGallery] = useState<boolean>(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   const currentPlan = PLANS[userState.plan];
   const creditsRemaining = Math.max(0, currentPlan.limit - userState.creditsUsed);
@@ -749,7 +753,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                   className="bg-brand-yellow text-slate-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition-colors flex items-center gap-2"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  意見・要望
+                  ご意見・ご要望はコチラ
                 </button>
                 <button 
                   onClick={() => onNavigate?.('commerce')}
@@ -780,6 +784,39 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           isOpen={showFeedbackModal} 
           onClose={() => setShowFeedbackModal(false)} 
         />
+
+        {/* Gallery Modal - 全画面表示 */}
+        {showGallery && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto border-4 border-slate-900">
+              <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex items-center justify-between z-10">
+                <h2 className="text-2xl font-black text-slate-900">マイ・ギャラリー</h2>
+                <button
+                  onClick={() => setShowGallery(false)}
+                  className="p-3 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  <X className="w-6 h-6 text-slate-600" />
+                </button>
+              </div>
+              <div className="p-8">
+                <Gallery onClose={() => setShowGallery(false)} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Settings Modal - 全画面表示（既に全画面化済み） */}
+        {showSettingsModal && (
+          <SettingsModal
+            isOpen={showSettingsModal}
+            onClose={() => setShowSettingsModal(false)}
+            userState={userState}
+            currentUser={currentUser}
+            onLogout={() => {
+              // ログアウト処理はApp.tsxで管理
+            }}
+          />
+        )}
       </div>
     </div>
   );

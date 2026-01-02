@@ -174,13 +174,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onNavigate })
               誰でも、簡単に、いつでも。<br/>月額980円〜で始める、<br className="md:hidden"/>お店の「売れる」写真改革。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <div className="flex flex-col items-center">
-                <LoginButton 
-                  onLoginSuccess={onLogin}
-                  className="w-full sm:w-auto"
-                />
-                <span className="block text-sm font-bold opacity-90 mt-2 text-slate-900">（登録30秒・クレカ不要）</span>
-              </div>
+              <button 
+                onClick={async () => {
+                  try {
+                    await signInWithGoogle();
+                    onLogin();
+                  } catch (error) {
+                    console.error('Login error:', error);
+                  }
+                }}
+                className="bg-slate-900 text-brand-yellow font-black py-5 px-10 rounded-2xl text-xl hover:bg-slate-800 hover:scale-105 hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transition-all shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] border-4 border-slate-900 transform hover:-translate-y-1 w-full sm:w-auto flex flex-col items-center"
+              >
+                今すぐ使ってみる
+                <span className="block text-sm font-bold opacity-90 mt-2">（登録30秒・クレカ不要）</span>
+              </button>
             </div>
           </div>
           
